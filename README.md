@@ -31,7 +31,7 @@ Every class contributes exactly $\frac{1}{18} \approx 5.56\%$ to the leaderboard
 
 ## 3. Submissions & Iteration Lineage
 
-The Kaggle submission history currently records ten scored runs:
+The Kaggle submission history currently records twelve scored runs:
 
 | # | Version Folder | Description & Key Innovations | Public LB Score |
 | :- | :--- | :--- | :---: |
@@ -45,8 +45,11 @@ The Kaggle submission history currently records ten scored runs:
 | **V8** | [kernel_v8/](file:///c:/Users/ssanj/OneDrive/Desktop/Sanjay/Antigravity/name_that_llm/kernel_v8) | V2 with only the grouped SVC-shift blend made more conservative | **0.623** |
 | **V9** | [kernel_v9/](file:///c:/Users/ssanj/OneDrive/Desktop/Sanjay/Antigravity/name_that_llm/kernel_v9) | V6 complementary stack + ATLAS with V2's curated/punctuation SVC recipe | Submission `57597207` scored **0.635** |
 | **V10** | [kernel_v10/](file:///c:/Users/ssanj/OneDrive/Desktop/Sanjay/Antigravity/name_that_llm/kernel_v10) | V6 + official-only prompt-residual readout with grouped OOF diagnostic | **0.639** (`57603012`) |
-| **V11** | [kernel_v11/](./kernel_v11/) | V10 with only the official-only readout weight increased from 5% to 10% | Submission `57621098` pending |
-| **V12** | [kernel_v12/](./kernel_v12/) | V10 with a three-seed projection ensemble for its 5% official-only readout | Submission `57625772` pending |
+| **V11** | [kernel_v11/](./kernel_v11/) | V10 with only the official-only readout weight increased from 5% to 10% | **0.639** (`57621098`) |
+| **V12** | [kernel_v12/](./kernel_v12/) | V10 with a three-seed projection ensemble for its 5% official-only readout | **0.639** (`57625772`) |
+| **V13** | [kernel_v13/](./kernel_v13/) | V10 with the 1,516-passage GLM/Kimi SVC augmentation | Submission `57637841` pending |
+| **V14** | [kernel_v14/](./kernel_v14/) | V10 with the curated public-only SVC pool replacing its original pool | Submission `57637845` pending |
+| **V15** | [kernel_v15/](./kernel_v15/) | V14's pool plus GLM/Kimi passages | Submission `57637848` pending |
 
 ---
 
@@ -68,6 +71,10 @@ V9 is a V6-derived candidate that preserves its complementary stack and ATLAS pa
 
 Keep V6's complete recipe as the control: its public source reports **0.642** prompt-grouped CV for the main two-stage blend versus **0.620** on the public leaderboard, while our reproduced submission reached **0.636** after adding the complementary stack and ATLAS. That CV/LB gap warns against fine-grained weight fitting on the small official training set. V9's submission `57597207` scored 0.635, so its SVC-data/features change did not improve on V6. V10 added a 5% official-only prompt-residual readout on the existing LoRA24 feature representation. Its five-fold `GroupKFold` diagnostic reported 0.775411 readout-only OOF balanced accuracy; this neither measures the full ensemble's OOF performance nor validates the leaderboard gain. Full competition submission `57603012` scored **0.639**.
 
-V11 is a one-variable weight ablation: raise the V10 readout contribution from 5% to 10%, holding all other models, data, and settings fixed. The public 0.639 style-readout notebook is explicitly unscored for its new experiment; its attached pretrained readout bank also has an unknown license. V11 therefore uses the V10 official-only readout and does not attach those public weights. Kaggle notebook version 1 completed the three-row public-preview smoke run, with all required model components verified; that is not accuracy evidence. Competition submission `57621098` was made and is pending full hidden-test scoring. See [V11 candidate notes](./kernel_v11/README.md).
+V11 is a one-variable weight ablation: raise the V10 readout contribution from 5% to 10%, holding all other models, data, and settings fixed. The public 0.639 style-readout notebook is explicitly unscored for its new experiment; its attached pretrained readout bank also has an unknown license. V11 therefore uses the V10 official-only readout and does not attach those public weights. Kaggle notebook version 1 completed the three-row public-preview smoke run, with all required model components verified; that is not accuracy evidence. Competition submission `57621098` scored **0.639**. See [V11 candidate notes](./kernel_v11/README.md).
 
-V12 is an independent one-variable branch from V10: keep the 5% mixture weight and all ensemble members fixed, but average three independently seeded 512-dimensional sparse projections in the official-only prompt-residual readout. The Kaggle smoke run reported 0.800616 five-fold prompt-grouped OOF balanced accuracy for the auxiliary ensemble, compared with 0.775411 for V10's single-projection readout. This is not the full ensemble's OOF score and does not guarantee a leaderboard gain. V12 does not use the public experiment's opaque synthetic readout weights. Competition submission `57625772` is pending full hidden-test scoring. See [V12 candidate notes](./kernel_v12/README.md).
+V12 is an independent one-variable branch from V10: keep the 5% mixture weight and all ensemble members fixed, but average three independently seeded 512-dimensional sparse projections in the official-only prompt-residual readout. The Kaggle smoke run reported 0.800616 five-fold prompt-grouped OOF balanced accuracy for the auxiliary ensemble, compared with 0.775411 for V10's single-projection readout. This is not the full ensemble's OOF score and does not guarantee a leaderboard gain. V12 does not use the public experiment's opaque synthetic readout weights. Competition submission `57625772` scored **0.639**. See [V12 candidate notes](./kernel_v12/README.md).
+
+### V13–V15: testing public SVC-pool changes
+
+V13 transfers a public GLM/Kimi SVC-pool experiment that scored 0.640 against a 0.639 control. This transfer is not expected to reproduce that gain automatically because its starting ensemble differs. V14 replaces V10's larger SVC pool with a curated, per-row-provenance public pool; its published five-fold prompt-grouped result is for the SVC component only (0.4582 versus 0.4430), not the full ensemble. V15 tests the curated pool plus the GLM/Kimi rows; their exact-text overlap was checked to be zero, but the combined effect is unknown. All three candidates change only the SVC training pool. Their completed three-row Kaggle previews verified execution and output format only; these previews were not submitted as prediction files. Instead, Kaggle code-competition submissions `57637841` (V13), `57637845` (V14), and `57637848` (V15) were made from kernel version 1 for hidden-test reruns and are pending scores.
