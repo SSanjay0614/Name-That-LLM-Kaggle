@@ -1,0 +1,22 @@
+{
+  "id": "sanjay0614/ntl-v7-independent-multiscale-centering",
+  "title": "NTL V7 Independent Multiscale Centering",
+  "code_file": "ntl_v7_independent_multiscale_centering.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "dataset_sources": [
+    "nishantdahal/ntl-handwriting-blend",
+    "prvsiyan/prvsiyans-extended-name-that-llm-dataset"
+  ],
+  "competition_sources": [
+    "name-that-llm"
+  ],
+  "model_sources": [
+    "qwen-lm/qwen-3/Transformers/14b-base/1",
+    "qwen-lm/qwen2.5/Transformers/14b/1"
+  ]
+}
