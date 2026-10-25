@@ -1,0 +1,21 @@
+{
+  "id": "sanjay0614/ntl-v1-baseline",
+  "title": "NTL V1 Baseline",
+  "code_file": "ntl_v1_baseline.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "dataset_sources": [
+    "nishantdahal/ntl-handwriting-blend"
+  ],
+  "competition_sources": [
+    "name-that-llm"
+  ],
+  "model_sources": [
+    "qwen-lm/qwen-3/Transformers/14b-base/1",
+    "qwen-lm/qwen2.5/Transformers/14b/1"
+  ]
+}

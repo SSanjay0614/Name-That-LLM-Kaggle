@@ -1,0 +1,31 @@
+{
+  "id": "adityaakbar/ntl-0627-small-encoder-ensemble",
+  "id_no": 140438501,
+  "title": "NTL 0627 Small Encoder Ensemble",
+  "code_file": "ntl-0627-small-encoder-ensemble.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "nuridudak/ntl-two-stage-encoders",
+    "nishantdahal/ntl-handwriting-blend",
+    "pjmathematician/ultrabert-380m-ntl"
+  ],
+  "kernel_sources": [
+    "lucasboesen/name-that-llm-electra-large-weights",
+    ""
+  ],
+  "competition_sources": [
+    "name-that-llm"
+  ],
+  "model_sources": [
+    "qwen-lm/qwen-3/Transformers/14b-base/1",
+    "qwen-lm/qwen2.5/Transformers/14b/1"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "nishantdahal/two-stage-lora-part-two",
+  "id_no": 140306245,
+  "title": "Two-stage LoRA, part two",
+  "code_file": "two-stage-lora-part-two.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "nishantdahal/ntl-handwriting-blend"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [
+    "name-that-llm"
+  ],
+  "model_sources": [
+    "qwen-lm/qwen-3/Transformers/14b-base/1",
+    "qwen-lm/qwen2.5/Transformers/14b/1"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "romantamrazov/name-that-llm-who-am-i",
+  "id_no": 140038898,
+  "title": "Name That LLM | Who am I?",
+  "code_file": "name-that-llm-who-am-i.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [],
+  "dataset_sources": [
+    "",
+    "nishantdahal/ntl-handwriting-blend"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [
+    "name-that-llm"
+  ],
+  "model_sources": [
+    "qwen-lm/qwen-3/Transformers/14b-base/1",
+    "qwen-lm/qwen2.5/Transformers/14b/1"
+  ]
+}

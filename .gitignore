@@ -1,0 +1,28 @@
+# Python & Notebook artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Data and large weights
+data/
+*.parquet
+*.npz
+*.safetensors
+*.pt
+*.bin
+*.whl
+*.zip
+
+# Temporary working outputs
+/tmp/
+*.log
+
+# Local outputs and scratch artifacts
+**/output/
+**/kaggle_output/
+**/kaggle_output_*/
+**/submission.csv
+**/baseline_submission.csv
+**/predictions.csv
+scratch/
