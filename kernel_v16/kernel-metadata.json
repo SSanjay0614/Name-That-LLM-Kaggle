@@ -1,0 +1,18 @@
+{
+  "id": "sanjay0614/ntl-v16-grouped-svc-source-ablation",
+  "title": "NTL V16 Grouped SVC Source Ablation",
+  "code_file": "ntl_v16_grouped_svc_source_ablation.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "dataset_sources": [
+    "nishantdahal/ntl-handwriting-blend",
+    "danielandresmiranda/ntl-openrouter-glm-kimi"
+  ],
+  "competition_sources": [
+    "name-that-llm"
+  ]
+}
