@@ -1,5 +1,8 @@
 # Name That LLM — Kaggle Competition
 
+Competition rules, submission workflow, and project process: [competition_info.md](./competition_info.md).
+Today's score analysis and submission plan: [action_plan.md](./action_plan.md).
+
 **Prize:** $50,000 USD  
 **Competition Type:** Code Competition (Offline inference, 2x NVIDIA T4 GPU)  
 **Evaluation Metric:** **Balanced Accuracy** across 18 candidate LLM classes  
@@ -31,7 +34,7 @@ Every class contributes exactly $\frac{1}{18} \approx 5.56\%$ to the leaderboard
 
 ## 3. Submissions & Iteration Lineage
 
-The Kaggle submission history currently records twelve scored runs:
+The Kaggle submission history records seventeen scored runs through October 26, 2026:
 
 | # | Version Folder | Description & Key Innovations | Public LB Score |
 | :- | :--- | :--- | :---: |
@@ -47,15 +50,19 @@ The Kaggle submission history currently records twelve scored runs:
 | **V10** | [kernel_v10/](file:///c:/Users/ssanj/OneDrive/Desktop/Sanjay/Antigravity/name_that_llm/kernel_v10) | V6 + official-only prompt-residual readout with grouped OOF diagnostic | **0.639** (`57603012`) |
 | **V11** | [kernel_v11/](./kernel_v11/) | V10 with only the official-only readout weight increased from 5% to 10% | **0.639** (`57621098`) |
 | **V12** | [kernel_v12/](./kernel_v12/) | V10 with a three-seed projection ensemble for its 5% official-only readout | **0.639** (`57625772`) |
-| **V13** | [kernel_v13/](./kernel_v13/) | V10 with the 1,516-passage GLM/Kimi SVC augmentation | Submission `57637841` pending |
-| **V14** | [kernel_v14/](./kernel_v14/) | V10 with the curated public-only SVC pool replacing its original pool | Submission `57637845` pending |
-| **V15** | [kernel_v15/](./kernel_v15/) | V14's pool plus GLM/Kimi passages | Submission `57637848` pending |
+| **V13** | [kernel_v13/](./kernel_v13/) | V10 with the 1,516-passage GLM/Kimi SVC augmentation | **0.640** (`57637841`) |
+| **V14** | [kernel_v14/](./kernel_v14/) | V10 with the curated public-only SVC pool replacing its original pool | **0.630** (`57637845`) |
+| **V15** | [kernel_v15/](./kernel_v15/) | V14's pool plus GLM/Kimi passages | **0.629** (`57637848`) |
+| **V17** | [kernel_v17/](./kernel_v17/) | V10 plus GLM-only SVC pool augmentation | Pending (`57665156`) |
+| **V18** | [kernel_v18/](./kernel_v18/) | V10 plus Kimi-only SVC pool augmentation | Pending (`57665192`) |
 
 ---
 
 ## 4. Results and next experiment
 
-Kaggle's recorded public scores show V10 is currently the best at **0.639**, followed by V6 at **0.636** and V9 at **0.635**. V10 improved on V6 by 0.003, though the public score alone cannot isolate the auxiliary readout's contribution.
+Kaggle's recorded public scores show V13 is currently the best at **0.640**, narrowly ahead of V10/V11/V12 at **0.639**. V6 scored **0.636** and V9 scored **0.635**. The 0.001 V13 lead is modest; the public score alone cannot isolate class-level effects or establish statistical significance.
+
+V17 and V18 are single-source SVC-pool ablations from V10: V17 adds 1,200 GLM passages and V18 adds 316 Kimi passages. Their code-competition submissions completed on October 26, 2026: V17 (`57665156`) scored 0.640 and V18 (`57665192`) scored 0.639. V13 remains tied for the best confirmed score at 0.640. See [V17 notes](./kernel_v17/README.md) and [V18 notes](./kernel_v18/README.md).
 
 One implementation mismatch was found in V5: its multi-scale centring subtracts the broad-cluster mean first, then calculates the tight-cluster mean from the already-adjusted embeddings. The effective correction therefore differs from the documented independent 70% tight / 30% broad calculation. This is a concrete issue to investigate, but the leaderboard alone cannot establish how much it affected the score.
 
@@ -77,4 +84,14 @@ V12 is an independent one-variable branch from V10: keep the 5% mixture weight a
 
 ### V13–V15: testing public SVC-pool changes
 
-V13 transfers a public GLM/Kimi SVC-pool experiment that scored 0.640 against a 0.639 control. This transfer is not expected to reproduce that gain automatically because its starting ensemble differs. V14 replaces V10's larger SVC pool with a curated, per-row-provenance public pool; its published five-fold prompt-grouped result is for the SVC component only (0.4582 versus 0.4430), not the full ensemble. V15 tests the curated pool plus the GLM/Kimi rows; their exact-text overlap was checked to be zero, but the combined effect is unknown. All three candidates change only the SVC training pool. Their completed three-row Kaggle previews verified execution and output format only; these previews were not submitted as prediction files. Instead, Kaggle code-competition submissions `57637841` (V13), `57637845` (V14), and `57637848` (V15) were made from kernel version 1 for hidden-test reruns and are pending scores.
+V13 transfers a public GLM/Kimi SVC-pool experiment and scored 0.640 against V10's 0.639. V14 replaces V10's larger SVC pool with a curated, per-row-provenance public pool; its published five-fold prompt-grouped result was for the SVC component only (0.4582 versus 0.4430), not the full ensemble. V14 scored 0.630. V15 tests the curated pool plus the GLM/Kimi rows; exact-text overlap between the added corpora was checked to be zero, but the combination scored 0.629. Kaggle submissions `57637841` (V13), `57637845` (V14), and `57637848` (V15) are complete and scored. Their visible three-row previews verified execution and output formatting only; they were not the scored predictions. See [today's action plan](./action_plan.md) for controlled follow-up experiments.
+
+### V16 grouped SVC source ablation — completed October 26, 2026
+
+The Kaggle validation completed after 10,378 seconds and wrote `kernel_v16/output/v16_svc_source_ablation.json`. Five prompt-grouped folds produced SVC-only OOF balanced accuracy of 0.473400 for the base pool, 0.473400 for base+GLM, 0.473773 for base+Kimi, and **0.476734 for base+GLM+Kimi** (+0.003333 versus base). This is a component metric, not full-ensemble OOF or a leaderboard score. V16 produces no competition submission file and must not be submitted as an inference notebook. V13 and V17 scored 0.640; V18 scored 0.639. Keep 0.640 as the incumbent until a complete full-pipeline validation supports a new candidate.
+
+## V19/V20 plan and Kaggle run status — October 26, 2026
+
+The latest public lead is the [verified NLM V27 reproduction](https://www.kaggle.com/code/avazaku/name-that-llm-0-651-verified-reproduction), whose author documents a verified 0.651 competition score; it is not our score. V19 reproduces that notebook with unchanged executable code and pinned Kaggle inputs. V20 changes only the SVC pool by adding the 1,516 CC BY 4.0 GLM/Kimi passages after exact `(model, text)` deduplication. The V20 idea is supported only by SVC-component OOF and V13's modest full-pipeline gain, so treat it as an experiment. The previous full runs were cancelled due to long runtimes; their smoke runs are setup checks only and cannot be submitted for scoring. New full Kaggle runs for V19 and V20 are now running as kernel version 4; submit only after their outputs and completion are verified.
+
+Both notebooks run on Kaggle GPU; no local model training is performed. The public reproduction reports a 4h04 visible run on T4 x2 and an unknown hidden-run time. As of October 26, 2026, Kaggle reports 2 submissions used today and 3 remaining. The version 4 V19 and V20 runs are intended for next-day review; preserve the quota until either run completes and its output is verified.
