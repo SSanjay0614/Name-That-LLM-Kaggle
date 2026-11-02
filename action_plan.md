@@ -151,6 +151,51 @@ Find one evidence-backed change that can beat 0.640 and finish within Kaggle's 9
 
 If no candidate clears these gates today, spend the day on runtime diagnosis and a license-cleared candidate design, then keep the 0.640 result as the incumbent.
 
+## Nov 1, 2026 score audit
+
+Kaggle's submission listing reports these completed public scores:
+
+| Candidate | Submission | Public score |
+|---|---:|---:|
+| V22 — sharper blend | `57830437` | 0.643 |
+| V23 — Qwen/Helper 15%, ATLAS 20% | `57831323` | 0.640 |
+| V24 — Qwen 20%, Helper/ATLAS 10% | `57831715` | 0.640 |
+| V25 — Qwen/Helper 10%, ATLAS 20% | `57831830` | 0.641 |
+| V26 — Qwen 18%, Helper 12%, ATLAS 18% | `57831956` | **0.644** |
+
+V26 is the current public-score anchor, but its 0.001 lead over V22 is small. A source comparison
+confirmed that V22 and V26 have the same 81 cells and differ only in the blend settings cell:
+V26 selects a new weight tuple. The scores support testing the blend direction further, but do not
+establish a robust improvement without paired prompt-grouped validation or per-class metrics.
+The fast-commit logs are only packaging previews; they are not accuracy validation. The full
+competition submissions did receive scores.
+
+**Next experiment:** keep V26 as the control. Before using another attempt, produce full-pipeline,
+prompt-grouped held-out predictions for V22 and V26 with identical inputs and folds, then report
+paired balanced-accuracy deltas and per-class recall. If validation supports it, test only a small
+adjacent blend-weight change, reusing cached component predictions if available. The current kernel
+outputs contain the final submission and fast-commit log, not a saved full component-prediction
+matrix, so do not assume weight changes can be tested without another full inference run.
+
+Kaggle reported **five attempts remaining today**. No Nov 1 Name That LLM attempt has been used.
+
+### Nov 1 candidate run
+
+Built and pushed V27, a single blend-weight ablation from V26: Qwen 0.20, Helper 0.10, ATLAS
+0.18. Kernel `sanjay0614/ntl-v27-qwen20-atlas18` version 1 completed and produced a valid
+`submission.parquet`; the run explicitly reported `exact_public_format_preview`, three rows,
+no model weights loaded, and `hidden_runtime_verified=false`. This is packaging evidence only.
+Submitted V27 as `57874985`, currently pending; Kaggle's code-competition scoring rerun evaluates
+the full hidden set. One of today's five NTL attempts is used; four remain.
+
+The four remaining attempts were planned for isolated one-weight changes from V26:
+V28 lowers Qwen to 0.16; V29 lowers Helper to 0.10; V30 raises ATLAS to 0.20; V31 lowers ATLAS
+to 0.16. V29 completed its preview and was submitted as `57875299` (pending). V28, V30, and V31
+failed their preview runs at the same assertion because `/kaggle/input/competitions/name-that-llm/test.csv`
+was missing; they have not been submitted. V28, V30, and V31 retries also failed. Kaggle reports
+three NTL attempts remaining. Do not spend them on those kernels unless a successful run produces
+their own valid outputs.
+
 ---
 
 ## STOP NOTICE - all three competitions paused until 2026-10-31 00:00 UTC (added October 27, 2026)
@@ -174,3 +219,12 @@ What each competition is waiting for:
   CPU run does not fit the 9 h limit and would score near 0.48 anyway, so it is not an option.
 
 Nothing above retracts earlier content in this file. It only records the current pause.
+
+---
+
+## 2026-10-27 — no activity from this session
+
+Not worked on today. No submission, no kernel push, no local run. The GPU quota is committed to
+ARC-AGI-3 until 2026-10-31, so this competition is queued behind that date; the plan below is
+unchanged. Recorded here only so the gap in the daily log is explained rather than looking like an
+oversight.

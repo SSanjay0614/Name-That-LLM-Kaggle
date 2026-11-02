@@ -53,14 +53,27 @@ The Kaggle submission history records seventeen scored runs through October 26, 
 | **V13** | [kernel_v13/](./kernel_v13/) | V10 with the 1,516-passage GLM/Kimi SVC augmentation | **0.640** (`57637841`) |
 | **V14** | [kernel_v14/](./kernel_v14/) | V10 with the curated public-only SVC pool replacing its original pool | **0.630** (`57637845`) |
 | **V15** | [kernel_v15/](./kernel_v15/) | V14's pool plus GLM/Kimi passages | **0.629** (`57637848`) |
-| **V17** | [kernel_v17/](./kernel_v17/) | V10 plus GLM-only SVC pool augmentation | Pending (`57665156`) |
-| **V18** | [kernel_v18/](./kernel_v18/) | V10 plus Kimi-only SVC pool augmentation | Pending (`57665192`) |
+| **V17** | [kernel_v17/](./kernel_v17/) | V10 plus GLM-only SVC pool augmentation | **0.640** (`57665156`) |
+| **V18** | [kernel_v18/](./kernel_v18/) | V10 plus Kimi-only SVC pool augmentation | **0.639** (`57665192`) |
+| **V19** | [kernel_v19/](./kernel_v19/) | Avazaku NLM V27 reproduction | Blocked: required private unattached asset cache (`avazaku/name-that-llm-verified-llama-asset-cache`). |
+| **V20** | [kernel_v20/](./kernel_v20/) | NLM V27 + GLM/Kimi SVC augmentation | Blocked: same private asset cache dependency as V19. |
+| **V21** | [kernel_v21/](./kernel_v21/) | Pure-pipeline NLM V27 fix | Blocked at runtime due to private LLaMA-3.1-8B shard path assertion. |
+| **V22** | [kernel_v22/](./kernel_v22/) | SOTA Sharper Blend (LB 0.643 recipe, Variant 4) | **0.643** (`57830437`) | Clean public source stack. |
+| **V23** | [kernel_v23/](./kernel_v23/) | ATLAS 20% + Sharper Blend SOTA (Variant 6) | **0.640** (`57831323`) | Qwen/Helper 15% each with ATLAS 20%. |
+| **V24** | [kernel_v24/](./kernel_v24/) | Qwen20 Strong Fulltext Focus (Variant 2) | **0.640** (`57831715`) | Qwen 20%, Helper 10%, ATLAS 10%. |
+| **V25** | [kernel_v25/](./kernel_v25/) | Clean 20% ATLAS Expansion (Variant 5) | **0.641** (`57831830`) | Qwen/Helper 10% each, ATLAS 20%. |
+| **V26** | [kernel_v26/](./kernel_v26/) | Apex Balanced Trio Blend (Variant 7) | **0.644** (`57831956`) | Qwen 18%, Helper 12%, ATLAS 18%; current best confirmed score. |
+| **V27** | [kernel_v27/](./kernel_v27/) | Qwen20 / ATLAS18 blend (Variant 8) | **Pending** (`57874985`) | One blend-weight ablation from V26; full score pending. |
+| **V28** | [kernel_v28/](./kernel_v28/) | Qwen16 / Helper12 / ATLAS18 | Preview failed: competition test input missing. |
+| **V29** | [kernel_v29/](./kernel_v29/) | Qwen18 / Helper10 / ATLAS18 | **Pending** (`57875299`) | One blend-weight ablation from V26. |
+| **V30** | [kernel_v30/](./kernel_v30/) | Qwen18 / Helper12 / ATLAS20 | Preview failed: competition test input missing. |
+| **V31** | [kernel_v31/](./kernel_v31/) | Qwen18 / Helper12 / ATLAS16 | Preview failed: competition test input missing. |
 
 ---
 
 ## 4. Results and next experiment
 
-Kaggle's recorded public scores show V13 is currently the best at **0.640**, narrowly ahead of V10/V11/V12 at **0.639**. V6 scored **0.636** and V9 scored **0.635**. The 0.001 V13 lead is modest; the public score alone cannot isolate class-level effects or establish statistical significance.
+Kaggle's latest recorded public scores show V26 is currently best at **0.644** (`57831956`), ahead of V22 at 0.643, V25 at 0.641, and V23/V24 at 0.640. Earlier V13/V17 scored 0.640. These are small public-score differences; no paired grouped-OOF or per-class evidence currently establishes that V26's blend is robustly better.
 
 V17 and V18 are single-source SVC-pool ablations from V10: V17 adds 1,200 GLM passages and V18 adds 316 Kimi passages. Their code-competition submissions completed on October 26, 2026: V17 (`57665156`) scored 0.640 and V18 (`57665192`) scored 0.639. V13 remains tied for the best confirmed score at 0.640. See [V17 notes](./kernel_v17/README.md) and [V18 notes](./kernel_v18/README.md).
 
