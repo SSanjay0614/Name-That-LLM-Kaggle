@@ -1,0 +1,24 @@
+{
+  "id": "sanjay0614/ntl-v43-q8-lora-pool",
+  "title": "NTL v43 q8 lora pool",
+  "code_file": "ntl_q8_lora_pool.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "sanjay0614/ntl-pool-v4",
+    "dhruvtibarewal/nlm-offline-wheels"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [
+    "qwen-lm/qwen-3/Transformers/8b-base/1"
+  ],
+  "machine_shape": "NvidiaTeslaT4"
+}
