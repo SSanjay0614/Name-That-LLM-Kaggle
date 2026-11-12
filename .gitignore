@@ -26,3 +26,7 @@ data/
 **/baseline_submission.csv
 **/predictions.csv
 scratch/
+
+# Downloaded kernel outputs (regenerated locally)
+out_*/
+kernel_*/out/
