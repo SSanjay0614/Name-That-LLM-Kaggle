@@ -228,3 +228,228 @@ Not worked on today. No submission, no kernel push, no local run. The GPU quota 
 ARC-AGI-3 until 2026-10-31, so this competition is queued behind that date; the plan below is
 unchanged. Recorded here only so the gap in the daily log is explained rather than looking like an
 oversight.
+
+---
+
+## 2026-11-02 - stop tuning our own blend, reproduce the best public recipe five times
+
+The Oct 31 - Nov 1 ladder is decisive: V22-V29 all sit at 0.640-0.644 and the ordering of those
+scores is not reproducible. V26 (0.644) stays as the incumbent, but another reweight of our own
+components cannot beat it by more than the board noise.
+
+The public board is a different picture. Independent accounts measure the same family of recipes
+at 0.663-0.664:
+
+- alexchilton's *All Public + What Failed* runs bgunshui's **Apex E** and scored **0.663** on
+  alexchilton's account. Its own table shows identical code moving by up to 0.009 across
+  resubmits, which is why one lucky score is not evidence.
+- gloria's controlled ladder reproduces the same control at **0.663** and lands 0.664 for the
+  open-pool SVC at weight 12 plus sinkhorn 0.30.
+- zbigniewkirchner's one-swap (the open pool in the 4-view SVC, `svc_w 12`) is the single change
+  underneath both, and is itself measured at 0.664.
+
+So this session spent all five slots on independent public recipes rather than on our blend, and
+deliberately picked five different lineages so a single failure mode does not cost the day:
+
+| slot | kernel | recipe |
+|---:|---|---|
+| 1 | `ntl-v32-apex-e-public` | Apex E verbatim (198k clean pool, `svc_w 12`, typography 1.2, sinkhorn 0.60) |
+| 2 | `ntl-v33-who-are-u-tuned` | judith007 hyperparameter-tuned Who Are U |
+| 3 | `ntl-v35-lora-trained27-gentle` | kirilltym LoRA + Trained27 GSQ 7% + gentle sibling |
+| 4 | `ntl-v34-one-swap-open-pool` | zbigniew one-swap |
+| 5 | `ntl-v37-open-pool-v11-matched` | gloria K: v11 pool in SVC + 49k matched v11 external rows |
+
+Every kernel was copied verbatim from the pulled notebook; only id, title, code_file and the
+private flag were rewritten, so the dataset/kernel/model attachments are the author's own. All
+commit runs completed on the cheap path (three-row fixture, `submission.parquet` 3 rows) and all
+five submissions `57906088`, `57906329`, `57906792`, `57907957`, `57907962` are pending.
+
+**What the five slots are testing.** Not five independent chances at a knob: four of them are the
+same 0.663-0.664 family with different member sets, and the fifth changes the external rows. If
+they land at 0.66 the gap to our 0.644 is real and comes from the 198k open pool plus the
+second-model members, not from calibration. If they land at 0.64, the public scores do not
+transfer and our own component set is competitive after all.
+
+---
+
+## 2026-11-11 - public ceiling is 0.684; the leaderboard top is 0.765
+
+**The number that changes the plan.** `kaggle competitions leaderboard name-that-llm --show`
+puts the top of the board at **0.765** (James Liebel), then 0.756, 0.752, 0.752, 0.748. Every
+public notebook tops out at **0.683-0.684** (alexchilton 0.683, hengzheng's fork 0.684, omerfaruk
+0.682, heliosli/lightningv08 0.681/0.680). Our best is 0.666.
+
+A 0.08 gap is not a blend-weight gap. The public stacks all descend from the same handful of
+`prefit` assets (SVC4, Gaussian heads, GSQ-27B, five-fold Qwen3-Embedding), and independent forks
+converge on 0.680-0.684 no matter which weight they move. The forum's single-model thread
+(754860) puts the best *single* open models at 0.65-0.68, so the leaders are not winning with one
+better classifier either: they are almost certainly training on a much larger self-generated
+corpus (rules §2.6 allows it; it costs API money, which we are not spending).
+
+So: treat **0.683-0.684 as the practical ceiling of the open-asset route**, and treat the remaining
+0.08 as out of reach unless we generate a large proprietary corpus.
+
+**Attachment audit, before spending a slot.** All 21 datasets and all 8 kernel sources resolve on
+our account (`datasets files` / `kernels status`), and the push reached the GPU-session check,
+which means the metadata (including the 7 model sources) validated. The verbatim copy is
+byte-identical to alexchilton's notebook (SHA256 D5002A84...).
+
+**Today's slate (5 slots, 0 used so far).** Driven by `tools/run_slate.py`: it retries only the
+`Maximum batch GPU session count` refusal, then for each kernel waits for COMPLETE, refuses to
+submit unless the output is the three-row preview artifact, and only then calls
+`competitions submit`. CASMI training holds both GPU sessions until roughly 19:00 local.
+
+| order | kernel | change vs the 0.683 verbatim |
+|---:|---|---|
+| 1 | `ntl-v38-0683-verbatim` | none - reproduction baseline |
+| 2 | `ntl-v39-gsq12` | `gsq_share` 0.06 -> 0.12 (omerfaruk's 0.682 setting) |
+| 3 | `ntl-v40-wemm14` | WeMM expert share 0.07 -> 0.14 (never probed publicly) |
+| 4 | `ntl-v41-sinkhorn45` | sinkhorn strength .30 -> .45 (judith's 0.664 value) |
+| 5 | `ntl-v42-gsq12-wemm14` | both expert shares at once |
+
+All five are inside the documented +-0.009 noise band, so they are not expected to prove anything
+on their own. Two honest reasons to still spend them:
+
+1. **They are free samples of a nondeterministic pipeline.** Identical code has scored 0.645 and
+   0.654 on this board, which means predictions differ run to run; the private score varies too.
+   With two final selections per entrant, five near-equal draws plus picking the best two is a
+   real (if small) edge.
+2. **The two expert-share axes are genuinely untested.** GSQ and WeMM are the only members added
+   after the 0.680 base whose share was never ablated in public.
+
+**What would actually move the needle next.** Not another fork. Either (a) a trained expert on a
+corpus several times larger than the 75.8k-row open pool we hold locally, which needs generation
+money, or (b) accept 0.683 and keep the slot lottery running until the deadline. Decide after the
+slate scores.
+
+### 2026-11-11 afternoon - first NTL submission of the day, and our own member starts
+
+**Submitted.** `58230146` (v38, 0.683 verbatim). The slate verified the three-row preview
+artifact (`rows=3 cols=[id, model] mode=exact_public_format_preview`) before calling
+`competitions submit`, and the counter went 5 -> 4. Quota is per competition, so this used none of
+CASMI's (which was already at 0/5).
+
+**Session juggling.** `casmi26-scorer-big-c` was deleted to free one of the two batch GPU
+sessions (its source is preserved in `enveda_casmi/kernel_c4_scorer_big_c/`, so it can be
+re-pushed). The session took about five minutes to be reclaimed, then the slate started. The
+`feat` trainer keeps the other session until roughly 19:00.
+
+**Our own member, `kernel_t1_q8_lora`.** Qwen3-8B 4-bit + LoRA r=16 on the 75.8k-row open pool
+plus the official 2,699 rows, with three deliberate differences from the public LoRA members:
+class-balanced sampling (the metric is balanced accuracy and the pool is imbalanced 2,338 ->
+6,736), prompt-grouped holdouts on *both* corpora, and per-class recall plus top-3 confusions
+written out. Source of truth is `trainer/train_q8_lora.py`; `tools/make_trainer_nb.py` compiles
+it into the notebook and syntax-checks every cell. Learning data ships as the private dataset
+`sanjay0614/ntl-pool-v4` (status `ready`).
+
+The gate is honest: this member earns a blend slot only if its pool-holdout balanced accuracy
+clears the ~0.66 that public components report. Otherwise it stays an experiment.
+
+---
+
+## 2026-11-12 - run the 0.684 pipeline we never ran
+
+Quota: **0/5 used at the start of the session** (lifetime 34).
+
+**What was wrong with the previous five days of NTL slots.** Every one of our five
+NTL submissions on 2026-11-11 (v38-v42, refs 58230146/58230186/58230220/58230246/58230268)
+was a fork of the same **0.683** Apex-Sovereign notebook: 60 cells, `CONFIG['gsq_share']`,
+a WeMM expert at 0.07, hard typography rules, `balance_logits(strength=.30, target_mix=.35)`.
+Scores: 0.677, 0.677, 0.673, 0.678 (best-ever), 0.672. The knob ladder inside that
+lineage is exhausted: +-0.009 run noise, no ordering signal.
+
+The public **0.684** release is a *different pipeline*, not a knob on 0.683:
+`lbjyang/ntl-684-ozertuu-mirror` (v3, itself a mirror of ozertuu's code, also published
+unchanged by areebbb, krshs90, wadigongren). It runs `infer.py` + `comp_stack.py`,
+adds the **native Qwen3-Embedding-8B expert at share 0.40** and the **Qwen3.8-27B
+classifier at 3%**, fits its complementary stack at run time with `comp_w 0.15`, groups
+test passages by embedding similarity, and has no WeMM member and no hard typography.
+Two independent copies of it score 0.684: lbjyang's mirror, and heliosli's
+`name-that-llm-lv683-a15` v13 (which adds a one-line mount shim and still scores 0.684).
+
+We have never submitted this pipeline. That is the gap today's slate closes.
+
+### Today's five
+
+| v | kernel | setting | source |
+|---|---|---|---|
+| v43 | `ntl-v43-684-verbatim` | none | `lbjyang/ntl-684-ozertuu-mirror` v3, verbatim |
+| v44 | `ntl-v44-684-sinkhorn20` | Sinkhorn strength 0.30 -> 0.20 | `prvsiyan/the-prompt-is-not-the-author` v37 |
+| v45 | `ntl-v45-684-targetmix50` | Sinkhorn target mix 0.35 -> 0.50 | `heliosli/name-that-llm-lv683-a15` v14 |
+| v46 | `ntl-v46-684-punct` | training-answer punctuation prior | `kirilltym/lora-trained27-evidence-for-close-calls` v19 |
+| v47 | `ntl-v47-684-native45` | native expert share 0.40 -> 0.45 | `prvsiyan/...` with Sinkhorn restored to 0.30 |
+
+All five are published copies (Apache-2.0) with the authors' own attachment lists, read
+from the pull API (`tools/fetch_public_meta.py`) rather than guessed: 17-24 datasets,
+8 kernel outputs, 6-10 models, the same public assets the 0.683 lineage already used,
+plus `crtproduction/name-that-llm-open-pool`, `dhruvtibarewal/nlm-matched-clean`,
+`dhruvtibarewal/nlm-offline-wheels`, `alexchilton/llama-3-1-8b-base` and
+`dangkhoa2016/tencent-wemm-embedding-4b`, all verified to resolve on this account.
+
+Builder: `tools_build_684.py` (asserted exact-match edits; every notebook parses, and
+only the named arguments differ). Driver: `tools/run_slate_684.py` (push one at a time,
+wait COMPLETE, require a 3-row `submission.parquet` with `[id, model]`, then submit via
+`competition_submit_code` - the CLI `submit -k` path returns a 400 on this account).
+
+**Why these variants and not five identical draws.** The 0.684 code's two calibration
+axes have public evidence behind them: weaker Sinkhorn is reported at +0.003 because the
+hidden class mix is uneven (and areebbb's higher target mix lost 0.002), and the native
+share is the one member added over 0.683. The punctuation prior is a genuinely new
+post-hoc mechanism fitted on the official answers, measured at +4..10 correct out of
+2,159 in the author's prompt-held-out checks. Together they bracket the pipeline rather
+than repeat it.
+
+**Decision rule.** If v43 lands >= 0.680 the 0.684 lineage transfers and becomes the new
+base for every future slate, with the calibration axes above as the only knobs. If the
+whole slate lands <= 0.678, the 0.08 gap to the board top is confirmed as corpus-bound
+(the leaders' 0.765 needs generated data we are not buying) and the remaining work is
+slot variance plus the own-LoRA member, not pipeline archaeology.
+
+### Submitted so far
+
+| ref | kernel | description |
+|---|---|---|
+| 58271414 | `ntl-v43-684-verbatim` | public 0.684 (ozertuu/lbjyang mirror v3) verbatim, no edits |
+
+The commit run hit the mirror's own `emit_known_preview` path in 1.3 minutes and the
+artifact was exactly 3 rows of `[id, model]` with `mode=exact_public_format_preview`,
+so the slot was spent on a verified preview. Note for the driver: the client returns a
+typed response object (`ApiCreateCodeSubmissionResponse`), not a dict - the first version
+of `submit()` called `.get()` on it and crashed *after* the submission had already been
+accepted; the fix reads `res.ref` (or `res["ref"]`) directly.
+
+### Own LoRA member, second attempt
+
+`sanjay0614/ntl-v43-q8-lora-pool` version 2 is pushed with the mount fix. The dataset was
+present with `pool_v4.parquet` and `train.csv` at its root, so the first run's
+`/kaggle/input/ntl-pool-v4/pool_v4.parquet` path was simply the wrong one for this
+session's layout. `find_data()` now tries `/kaggle/input/<slug>`, then
+`/kaggle/input/datasets/sanjay0614/ntl-pool-v4`, then a bounded recursive glob, and fails
+with the top-level mount listing if all three miss. It runs on the second GPU session and
+spends no submission slot.
+
+### Full slate submitted - all 5 slots used
+
+| ref | v | kernel | setting vs 0.684 |
+|---|---|---|---|
+| 58271414 | v43 | `ntl-v43-684-verbatim` | none (canonical reproduction) |
+| 58271509 | v44 | `ntl-v44-684-sinkhorn20` | Sinkhorn strength 0.30 -> 0.20 |
+| 58271607 | v45 | `ntl-v45-684-targetmix50` | Sinkhorn target mix 0.35 -> 0.50 |
+| 58271647 | v46 | `ntl-v46-684-punct` | training-answer punctuation prior |
+| 58271742 | v47 | `ntl-v47-684-native45` | native expert share 0.40 -> 0.45 |
+
+All five commit runs finished in 1-3 minutes and produced a verified 3-row
+`submission.parquet` with `[id, model]` before the slot was spent. Two of the five
+(v43, v46) carry the author's explicit `exact_public_format_preview` marker; the other
+three hit the `FAST_COMMIT` branch, which writes the same three-row artifact without a
+mode file, so the check was rows and columns rather than the marker.
+
+Quota went 5 -> 0; lifetime 34 -> 39. Everything is PENDING, so the board numbers land
+later. Nothing else is left to spend today.
+
+**What to read when the scores appear.** v43 is the pipeline test: if the canonical 0.684
+reproduces at or above 0.680 on this account, the 0.684 lineage replaces the 0.683 fork as
+the base and the three calibration axes (Sinkhorn strength, target mix, native share) plus
+the punctuation prior become the only knobs worth moving. If v43 lands at 0.677 again, the
+0.006-0.008 shortfall against the authors is account-level noise, and the decision is
+whether to keep drawing variance or move to the own-LoRA member as the only real edge.

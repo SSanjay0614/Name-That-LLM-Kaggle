@@ -1,0 +1,24 @@
+{
+  "id": "itshimanshu666/name-that-llm-grandmaster-champion-75",
+  "id_no": 142109094,
+  "title": "Name That LLM Grandmaster Champion 75",
+  "code_file": "name-that-llm-grandmaster-champion-75.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [],
+  "dataset_sources": [
+    "dhruvtibarewal/nlm-l24-adapters",
+    "crtproduction/name-that-llm-open-pool"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [
+    "name-that-llm"
+  ],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-private-byod/python@sha256:9a6bcfda6d03b2cd9aa347ee8c1bae62043328ed0f4afe9bda014e4f8bbf9435",
+  "machine_shape": "NvidiaTeslaT4"
+}

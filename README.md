@@ -68,6 +68,16 @@ The Kaggle submission history records seventeen scored runs through October 26, 
 | **V29** | [kernel_v29/](./kernel_v29/) | Qwen18 / Helper10 / ATLAS18 | **Pending** (`57875299`) | One blend-weight ablation from V26. |
 | **V30** | [kernel_v30/](./kernel_v30/) | Qwen18 / Helper12 / ATLAS20 | Preview failed: competition test input missing. |
 | **V31** | [kernel_v31/](./kernel_v31/) | Qwen18 / Helper12 / ATLAS16 | Preview failed: competition test input missing. |
+| **V38** | [kernel_v38/](./kernel_v38/) | Verbatim alexchilton 0.683 (V28 Sovereign Titan Apex Fusion) | Slate 2026-11-11 |
+| **V39** | [kernel_v39/](./kernel_v39/) | V38 with `gsq_share` 0.06 -> 0.12 | Slate 2026-11-11 |
+| **V40** | [kernel_v40/](./kernel_v40/) | V38 with WeMM expert share 0.07 -> 0.14 | Slate 2026-11-11 |
+| **V41** | [kernel_v41/](./kernel_v41/) | V38 with sinkhorn strength .30 -> .45 | Slate 2026-11-11 |
+| **V42** | [kernel_v42/](./kernel_v42/) | V38 with GSQ .12 + WeMM .14 | Slate 2026-11-11 |
+
+V32-V37 (public-recipe reproductions from 2026-11-02) are recorded in
+[action_plan.md](./action_plan.md). As of 2026-11-11 the public-notebook ceiling is 0.684 while the
+leaderboard top is 0.765; see the 2026-11-11 entry in the action plan for why that gap is a data
+gap, not a blend-weight gap.
 
 ---
 
@@ -108,3 +118,38 @@ The Kaggle validation completed after 10,378 seconds and wrote `kernel_v16/outpu
 The latest public lead is the [verified NLM V27 reproduction](https://www.kaggle.com/code/avazaku/name-that-llm-0-651-verified-reproduction), whose author documents a verified 0.651 competition score; it is not our score. V19 reproduces that notebook with unchanged executable code and pinned Kaggle inputs. V20 changes only the SVC pool by adding the 1,516 CC BY 4.0 GLM/Kimi passages after exact `(model, text)` deduplication. The V20 idea is supported only by SVC-component OOF and V13's modest full-pipeline gain, so treat it as an experiment. The previous full runs were cancelled due to long runtimes; their smoke runs are setup checks only and cannot be submitted for scoring. New full Kaggle runs for V19 and V20 are now running as kernel version 4; submit only after their outputs and completion are verified.
 
 Both notebooks run on Kaggle GPU; no local model training is performed. The public reproduction reports a 4h04 visible run on T4 x2 and an unknown hidden-run time. As of October 26, 2026, Kaggle reports 2 submissions used today and 3 remaining. The version 4 V19 and V20 runs are intended for next-day review; preserve the quota until either run completes and its output is verified.
+
+---
+
+## 2026-11-12 - the 0.684 pipeline slate
+
+The previous slate (v38-v42) forked the **0.683** Apex-Sovereign notebook; it peaked at
+0.678 and the knob ladder inside that lineage is exhausted. The public **0.684** release
+is a different pipeline: `infer.py` + `comp_stack.py`, the native Qwen3-Embedding-8B
+expert at share 0.40, the Qwen3.8-27B classifier at 3%, a run-time-fitted complementary
+stack (`comp_w 0.15`), embedding-similarity passage grouping, and no WeMM expert and no
+hard typography rules. Two independent public copies score 0.684, and this account had
+never run it.
+
+| v | kernel | setting vs 0.684 |
+|---|---|---|
+| v43 | `ntl-v43-684-verbatim` | none (canonical reproduction draw) |
+| v44 | `ntl-v44-684-sinkhorn20` | Sinkhorn strength 0.30 -> 0.20 |
+| v45 | `ntl-v45-684-targetmix50` | Sinkhorn target mix 0.35 -> 0.50 |
+| v46 | `ntl-v46-684-punct` | training-answer punctuation prior (new mechanism) |
+| v47 | `ntl-v47-684-native45` | native expert share 0.40 -> 0.45 |
+
+Built by `tools_build_684.py` from the public notebooks' own cells with the authors'
+attachment lists (read from the pull API by `tools/fetch_public_meta.py`); driven by
+`tools/run_slate_684.py`, which pushes one kernel at a time, insists on a 3-row
+`submission.parquet` with `[id, model]` before spending a slot, and submits through
+`competition_submit_code` (the CLI's `submit -k` path returns an empty-body 400 here).
+
+### Own LoRA member
+
+The Qwen3-8B QLoRA trainer (`kernel_t1_q8_lora`, driven by `trainer/train_q8_lora.py`)
+failed on its first run with `FileNotFoundError: /kaggle/input/ntl-pool-v4/pool_v4.parquet`
+- the dataset mounted one level deeper than expected. `find_data()` now tries both known
+layouts and then a bounded recursive glob, so a mount-layout change cannot kill the run
+again. The trainer is unchanged otherwise: class-balanced sampling, prompt-grouped
+holdouts on both corpora, per-class recall and top-3 confusions written out.
